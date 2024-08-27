@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    input, button { margin: 5px; }
+    #variant-list { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Create Variants</h2>
+  <form id="variant-form">
+    <label for="variant-name">Variant Name:</label>
+    <input type="text" id="variant-name" name="variant-name" value="HDCalls"><br>
+    <button type="button" id="add-variant">Add Variant</button>
+    <button type="button" id="create-variants" disabled>Create Variants</button>
+  </form>
+  <ul id="variant-list"></ul>
+  <script>
+    const variants = [];
+    const variantList = document.getElementById('variant-list');
+    const createVariantsButton = document.getElementById('create-variants');
+
+    document.getElementById('add-variant').onclick = () => {
+      const name = document.getElementById('variant-name').value;
+      if (name) {
+        variants.push({ name });
+        document.getElementById('variant-name').value = '';
+        updateVariantList();
+        updateCreateButtonState();
+      }
+    };
+
+    document.getElementById('create-variants').onclick = () => {
+      parent.postMessage({ pluginMessage: { type: 'create-variants', variants } }, '*');
+    };
+
+    function updateVariantList() {
+      variantList.innerHTML = '';
+      variants.forEach(variant => {
+        const li = document.createElement('li');
+        li.textContent = variant.name;
+        variantList.appendChild(li);
+      });
+    }
+
+    function updateCreateButtonState() {
+      createVariantsButton.disabled = variants.length === 0;
+    }
+  </script>
+</body>
+</html>
